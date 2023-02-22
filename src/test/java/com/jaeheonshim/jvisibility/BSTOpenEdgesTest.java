@@ -150,4 +150,18 @@ public class BSTOpenEdgesTest {
 
         assertEquals(edgesTree.smallest(), testEdge3);
     }
+
+    @Test
+    public void singleRemoval() {
+        Point tP1 = new Point(0, 0);
+        Point tP2 = new Point(Double.MAX_VALUE, 0);
+
+        BSTOpenEdges edgesTree = new BSTOpenEdges();
+
+        Edge testEdge1 = new Edge(new Point(5, -1), new Point(5, 1));
+        edgesTree.insert(tP1, tP2, testEdge1);
+        edgesTree.delete(tP1, tP2, testEdge1);
+
+        assertNull(edgesTree.getRoot());
+    }
 }

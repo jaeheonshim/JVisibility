@@ -11,6 +11,14 @@ public class Polygon {
     public Polygon(Point[] points) {
         this(01, points);
     }
+
+    public Polygon(double[] pointCoords) {
+        this.points = new Point[pointCoords.length / 2];
+        for(int i = 0; i < pointCoords.length / 2; i++) {
+            this.points[i] = new Point(pointCoords[2 * i], pointCoords[2 * i + 1]);
+        }
+    }
+
     public Polygon(int id, Point[] points) {
         this.points = points;
         for(int i = 0; i < points.length - 1; i++) {

@@ -28,24 +28,27 @@ public class VisibilityGraphGenerator {
         };
     }
 
-    public static List<Point> visibleVertices(Point point, Environment environment) {
+    public static List<Point> visibleVertices(Point start, Point end, Environment environment) {
         List<Edge> edges = environment.getEdges();
         List<Point> points = environment.getPoints();
 
-        points.sort(getAngleComparator(point));
+        if (start != null && !points.contains(start)) points.add(start);
+        if (end != null && !points.contains(end)) points.add(end);
+
+        points.sort(getAngleComparator(start));
 
         OpenEdges openEdges = new BSTOpenEdges();
 
-        Point pointInf = new Point(Double.MAX_VALUE, point.y);
+        Point pointInf = new Point(Double.MAX_VALUE, start.y);
         for (Edge edge : edges) {
-            if (edge.containsEndpoint(point))
+            if (edge.containsEndpoint(start))
                 continue;
-            if (GeometryMath.edgeIntersect(point, pointInf, edge)) {
-                if (GeometryMath.onSegment(point, edge.p1, pointInf))
+            if (GeometryMath.edgeIntersect(start, pointInf, edge)) {
+                if (GeometryMath.onSegment(start, edge.p1, pointInf))
                     continue;
-                if (GeometryMath.onSegment(point, edge.p2, pointInf))
+                if (GeometryMath.onSegment(start, edge.p2, pointInf))
                     continue;
-                openEdges.insert(point, pointInf, edge);
+                openEdges.insert(start, pointInf, edge);
             }
         }
 
@@ -56,23 +59,23 @@ public class VisibilityGraphGenerator {
         boolean prevVisible = false;
 
         for (Point p : points) {
-            if (p.equals(point))
+            if (p.equals(start))
                 continue;
 
             for (Edge edge : environment.getIncidentEdges(p)) {
-                if (GeometryMath.ccw(point, p, edge.getOtherVertex(p)) == -1) {
-                    openEdges.delete(point, p, edge);
+                if (GeometryMath.ccw(start, p, edge.getOtherVertex(p)) == -1) {
+                    openEdges.delete(start, p, edge);
                 }
             }
 
             boolean isVisible = false;
-            if (prev == null || GeometryMath.ccw(point, prev, p) != 0 || !GeometryMath.onSegment(point, prev, p)) {
+            if (prev == null || GeometryMath.ccw(start, prev, p) != 0 || !GeometryMath.onSegment(start, prev, p)) {
                 if (openEdges.size() == 0) {
                     isVisible = true;
-                } else if (!GeometryMath.edgeIntersect(point, p, openEdges.smallest())) {
+                } else if (!GeometryMath.edgeIntersect(start, p, openEdges.smallest())) {
                     isVisible = true;
                 }
-            } else if (prevVisible) {
+            } else if (!prevVisible) {
                 isVisible = false;
             } else {
                 isVisible = true;
@@ -82,15 +85,14 @@ public class VisibilityGraphGenerator {
                         break;
                     }
                 }
+
+                if (isVisible && GeometryMath.edgeInPolygon(prev, p, environment)) {
+                    isVisible = false;
+                }
             }
 
-            if (isVisible && !environment.getAdjacentPoints(point).contains(p)) {
-                isVisible = !GeometryMath.edgeInPolygon(point, p, environment);
-            }
-
-
-            if (isVisible && GeometryMath.edgeInPolygon(prev, p, environment)) {
-                isVisible = false;
+            if (isVisible && !environment.getAdjacentPoints(start).contains(p)) {
+                isVisible = !GeometryMath.edgeInPolygon(start, p, environment);
             }
 
             if (isVisible) {
@@ -98,8 +100,8 @@ public class VisibilityGraphGenerator {
             }
 
             for (Edge edge : environment.getIncidentEdges(p)) {
-                if (edge.containsEndpoint(point) && GeometryMath.ccw(point, p, edge.getOtherVertex(p)) == 1) {
-                    openEdges.insert(point, p, edge);
+                if (!edge.containsEndpoint(start) && GeometryMath.ccw(start, p, edge.getOtherVertex(p)) == 1) {
+                    openEdges.insert(start, p, edge);
                 }
             }
 
@@ -108,5 +110,19 @@ public class VisibilityGraphGenerator {
         }
 
         return visible;
+    }
+
+    public static VisibilityGraph generateGraph(Point start, Point end, Environment environment) {
+        VisibilityGraph graph = new VisibilityGraph(environment);
+
+        for (Point point : environment.getPoints()) {
+            List<Point> visible = visibleVertices(point, end, environment);
+            graph.addVisible(point, visible);
+        }
+
+        graph.addVisible(start, visibleVertices(start, end, environment));
+        graph.addVisible(end, visibleVertices(end, end, environment));
+
+        return graph;
     }
 }

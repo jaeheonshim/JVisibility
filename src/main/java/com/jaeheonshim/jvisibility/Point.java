@@ -1,5 +1,7 @@
 package com.jaeheonshim.jvisibility;
 
+import java.util.Objects;
+
 public class Point {
     private int polygonId = -1;
     public double x;
@@ -24,5 +26,17 @@ public class Point {
 
     public void setPolygonId(int polygonId) {
         this.polygonId = polygonId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Point)) return false;
+        Point other = (Point) obj;
+        return other.x == this.x && other.y == this.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.x, this.y);
     }
 }

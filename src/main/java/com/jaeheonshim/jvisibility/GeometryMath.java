@@ -186,7 +186,7 @@ public class GeometryMath {
         if(p1.getPolygonId() != p2.getPolygonId()) return false;
         if(p1.getPolygonId() == -1 || p2.getPolygonId() == -1) return false;
     
-        Point midPoint = new Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+        Point midPoint = new Point((p1.x + p2.x) / 2.0, (p1.y + p2.y) / 2.0);
         return isPointInPolygon(midPoint, env.getPolygonById(p1.getPolygonId()));
     }
 }

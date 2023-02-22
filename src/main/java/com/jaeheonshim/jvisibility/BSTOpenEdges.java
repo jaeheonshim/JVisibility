@@ -59,8 +59,8 @@ public class BSTOpenEdges implements OpenEdges {
     }
 
     private Node delete(Point p1, Point p2, Edge edge, Node node) {
-        double dist = GeometryMath.pointEdgeDistance(p1, p2, edge);
-        if(node == null) return null;
+        if(node == null || edge == null) return null;
+        double dist = GeometryMath. pointEdgeDistance(p1, p2, edge);
 
         double cmpDist = GeometryMath.pointEdgeDistance(p1, p2, node.data);
         if(node.data.equals(edge)) {
@@ -70,12 +70,9 @@ public class BSTOpenEdges implements OpenEdges {
             } else if(node.right == null) {
                 return node.left;
             } else {
-                Node successor = smallest(node.right);
-                Edge data = successor.data;
-                delete(p1, p2, data, node);
+                node.data = smallest(node.right).data;
+                node.right = delete(p1, p2, node.data, node.right);
                 size += 1;
-                node.data = data;
-                return node;
             }
         } else if(dist < cmpDist) {
             node.left = delete(p1, p2, edge, node.left);

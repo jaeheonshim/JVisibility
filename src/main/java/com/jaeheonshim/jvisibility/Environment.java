@@ -12,6 +12,16 @@ public class Environment {
 
     private int polygonIdCounter = 0;
 
+    public Environment() {
+
+    }
+
+    public Environment(List<Polygon> polygons) {
+        for(Polygon p : polygons) {
+            addPolygon(p);
+        }
+    }
+
     public void addPolygon(Polygon p) {
         p.setId(polygonIdCounter);
         polygonMap.put(polygonIdCounter++, p);
