@@ -98,8 +98,6 @@ public class VisibilityGraphGeneratorTest {
 
         assertFalse(graph.isVisible(new Point(2, 1.75), new Point(4, 1)));
 
-
-
-        List<Point> shortestPath = graph.shortestPath(new Point(0, 0), new Point(3.5, 3.5));
+        List<Point> shortestPath = graph.shortestPath(new Point(1, 1), new Point(4, 2));
     }
 }

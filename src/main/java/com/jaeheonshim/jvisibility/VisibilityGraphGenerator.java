@@ -120,8 +120,8 @@ public class VisibilityGraphGenerator {
             graph.addVisible(point, visible);
         }
 
-        graph.addVisible(start, visibleVertices(start, end, environment));
-        graph.addVisible(end, visibleVertices(end, end, environment));
+        if(start != null) graph.addVisible(start, visibleVertices(start, end, environment));
+        if(end != null) graph.addVisible(end, visibleVertices(end, end, environment));
 
         return graph;
     }

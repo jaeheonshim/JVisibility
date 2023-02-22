@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.StringJoiner;
 
 public class ComprehensiveTimingTest {
+    public static int n = 10000000;
+
     @Test
     public void test() throws IOException {
         List<Polygon> polygonList = new ArrayList<>();
@@ -56,5 +58,35 @@ public class ComprehensiveTimingTest {
         }
 
         Environment environment = new Environment(polygonList);
+
+        long total = 0;
+
+        for(int i = 0; i < n; ++i) {
+            long startTime = System.currentTimeMillis();
+            VisibilityGraph graph = VisibilityGraphGenerator.generateGraph(null, null, environment);
+            long delta = System.currentTimeMillis() - startTime;
+
+            total += delta;
+        }
+
+        System.out.printf("Ran %d iterations with avg %.8f ms running time %n", n, total / (double) n);
+    }
+
+    public static Point generateValidPoint(Environment env) {
+        do {
+            double xMax = 16.54175;
+            double yMax = 8.0137;
+
+            double x = Math.random() * xMax;
+            double y = Math.random() * yMax;
+
+            Point p = new Point(x, y);
+
+            for(Polygon poly : env.getPolygons()) {
+                if(GeometryMath.isPointInPolygon(p, poly)) continue;
+            }
+
+            return p;
+        } while(true);
     }
 }

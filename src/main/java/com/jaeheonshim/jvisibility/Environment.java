@@ -1,9 +1,6 @@
 package com.jaeheonshim.jvisibility;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Environment {
     private Map<Integer, Polygon> polygonMap = new HashMap<>();
@@ -73,5 +70,9 @@ public class Environment {
 
     public List<Point> getPoints() {
         return new ArrayList<>(incidentEdges.keySet());
+    }
+
+    public Collection<Polygon> getPolygons() {
+        return polygonMap.values();
     }
 }
